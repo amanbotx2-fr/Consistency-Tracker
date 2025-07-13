@@ -112,6 +112,43 @@ app.get('/api/entries', (req, res) => {
     });
 });
 
+app.post('/api/entries', (req, res) => {
+    const { date, activity, hours = 0, minutes = 0, notes, project, mood = 'neutral', productivity = 5, location, tags = [] } = req.body;
+    
+    if (!date || !activity) {
+        return res.status(400).json({
+            success: false,
+            message: 'Date and activity are required'
+        });
+    }
+    
+    const totalTime = hours + (minutes / 60);
+    const newEntry = {
+        id: entries.length + 1,
+        userId: 1,
+        date: date,
+        activity: activity,
+        activityDisplay: activity.charAt(0).toUpperCase() + activity.slice(1),
+        totalTime: totalTime,
+        formattedTime: `${Math.floor(totalTime)}h ${Math.round((totalTime - Math.floor(totalTime)) * 60)}m`,
+        notes: notes || '',
+        mood: mood,
+        productivity: productivity,
+        project: project || '',
+        location: location || '',
+        tags: Array.isArray(tags) ? tags : [],
+        createdAt: new Date()
+    };
+    
+    entries.push(newEntry);
+    
+    res.status(201).json({
+        success: true,
+        message: 'Entry added successfully',
+        data: newEntry
+    });
+});
+
 app.get('/api/entries/stats/summary', (req, res) => {
     const userEntries = entries.filter(entry => entry.userId === 1);
     const totalHours = userEntries.reduce((sum, e) => sum + e.totalTime, 0);

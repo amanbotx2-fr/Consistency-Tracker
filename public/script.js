@@ -274,22 +274,21 @@ function updateRecentActivity(entries) {
 async function addEntry(event) {
     event.preventDefault();
     
-    const formData = new FormData(event.target);
     const entryData = {
-        date: formData.get('date'),
-        activity: formData.get('activity'),
-        hours: parseFloat(formData.get('hours')) || 0,
-        minutes: parseInt(formData.get('minutes')) || 0,
-        notes: formData.get('notes'),
-        project: formData.get('project'),
-        mood: formData.get('mood'),
-        productivity: parseInt(formData.get('productivity')) || 5,
-        location: formData.get('location'),
-        tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()) : []
+        date: document.getElementById('date').value,
+        activity: document.getElementById('activity').value,
+        hours: parseFloat(document.getElementById('hours').value) || 0,
+        minutes: parseInt(document.getElementById('minutes').value) || 0,
+        notes: document.getElementById('notes').value,
+        project: document.getElementById('project').value,
+        mood: document.getElementById('mood').value,
+        productivity: parseInt(document.getElementById('productivity').value) || 5,
+        location: document.getElementById('location').value,
+        tags: document.getElementById('tags').value ? document.getElementById('tags').value.split(',').map(tag => tag.trim()) : []
     };
     
-    if (!entryData.date || !entryData.activity || (entryData.hours === 0 && entryData.minutes === 0)) {
-        alert('Please fill in all required fields!');
+    if (!entryData.date || !entryData.activity) {
+        alert('Please fill in Date and Activity!');
         return;
     }
     
