@@ -168,6 +168,85 @@ MIT License - feel free to use this code for your own projects.
 
 I built this to track my daily activities and build better habits. Hope it helps you too!
 
+## 🧪 Testing Guide
+
+### **Demo Mode (No Database Required)**
+```bash
+npm run demo
+```
+- **URL:** http://localhost:3000
+- **Demo Login:** `demo@example.com` / `demo123`
+- **Features:** Pre-filled data, no registration needed
+
+### **Full Mode (With MongoDB)**
+```bash
+npm run dev
+```
+- **URL:** http://localhost:3000
+- **Registration:** Create new accounts
+- **Features:** Real database, persistent data
+
+### **Test User Accounts**
+
+#### **Demo User (Demo Mode)**
+- **Email:** `demo@example.com`
+- **Password:** `demo123`
+- **Data:** Pre-filled with sample entries
+
+#### **New User Registration (Full Mode)**
+1. Click "Register" tab
+2. Fill in details:
+   - **Username:** `testuser`
+   - **Email:** `testuser@example.com`
+   - **Password:** `password123`
+   - **First/Last Name:** (optional)
+
+#### **Multiple Test Users**
+Create these accounts to test different scenarios:
+- **User 1:** `user1@example.com` / `password123`
+- **User 2:** `user2@example.com` / `password456`
+- **Admin:** `admin@example.com` / `admin123`
+
+### **Testing Checklist**
+
+#### **Authentication**
+- [ ] Register new account
+- [ ] Login with credentials
+- [ ] Logout functionality
+- [ ] Session persistence (refresh page)
+
+#### **Core Features**
+- [ ] Add new activity entry
+- [ ] View dashboard stats
+- [ ] Browse activity history
+- [ ] Filter entries by date/activity
+- [ ] Delete entries
+
+#### **Analytics & Achievements**
+- [ ] View analytics charts
+- [ ] Check achievement badges
+- [ ] Calendar view
+- [ ] Progress tracking
+
+#### **Profile Management**
+- [ ] Update profile information
+- [ ] Change preferences
+- [ ] Set daily goals
+
+### **Common Test Scenarios**
+
+1. **New User Journey:**
+   - Register → Login → Add first entry → View dashboard
+
+2. **Data Persistence:**
+   - Add entries → Logout → Login → Check if data remains
+
+3. **Multiple Users:**
+   - Create 2 accounts → Add different entries → Verify data isolation
+
+4. **Responsive Design:**
+   - Test on mobile/tablet → Check navigation → Verify forms work
+
 ## 📞 Support
 
 If you encounter any issues or have questions:

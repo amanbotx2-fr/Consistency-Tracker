@@ -9,15 +9,15 @@
 </head>
 <body>
     <!-- Authentication Modal -->
-    <div id="authModal" class="modal">
+    <div id="authModal" class="modal" style="display: flex;">
         <div class="modal-content">
             <div class="auth-tabs">
-                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
-                <button class="tab-btn" onclick="switchTab('register')">Register</button>
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="register">Register</button>
             </div>
             
             <!-- Login Form -->
-            <form id="loginForm" class="auth-form">
+            <form id="loginForm" class="auth-form" style="display: block;">
                 <h2>Welcome Back</h2>
                 <div class="form-group">
                     <label for="loginEmail">Email:</label>
@@ -68,29 +68,29 @@
                 <h1>🚀 Consistency Tracker</h1>
                 <div class="user-info">
                     <span id="userName">Welcome</span>
-                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                    <button class="btn btn-secondary" id="logoutBtn">Logout</button>
                 </div>
             </div>
         </header>
         
         <!-- Navigation -->
         <nav class="app-nav">
-            <button class="nav-btn active" onclick="showSection('dashboard')">
+            <button class="nav-btn active" data-section="dashboard">
                 <i class="fas fa-chart-line"></i> Dashboard
             </button>
-            <button class="nav-btn" onclick="showSection('log')">
+            <button class="nav-btn" data-section="log">
                 <i class="fas fa-plus"></i> Log Entry
             </button>
-            <button class="nav-btn" onclick="showSection('history')">
+            <button class="nav-btn" data-section="history">
                 <i class="fas fa-history"></i> History
             </button>
-            <button class="nav-btn" onclick="showSection('analytics')">
+            <button class="nav-btn" data-section="analytics">
                 <i class="fas fa-chart-bar"></i> Analytics
             </button>
-            <button class="nav-btn" onclick="showSection('achievements')">
+            <button class="nav-btn" data-section="achievements">
                 <i class="fas fa-trophy"></i> Achievements
             </button>
-            <button class="nav-btn" onclick="showSection('profile')">
+            <button class="nav-btn" data-section="profile">
                 <i class="fas fa-user"></i> Profile
             </button>
         </nav>

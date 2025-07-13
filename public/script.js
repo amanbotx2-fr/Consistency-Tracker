@@ -35,10 +35,10 @@ function hideAuthModal() {
     document.getElementById('appContainer').style.display = 'block';
 }
 
-function switchTab(tab) {
+function switchTab(tab, clickedButton) {
     // Update tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    clickedButton.classList.add('active');
     
     // Show/hide forms
     document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
@@ -168,7 +168,7 @@ function updateUserInfo() {
 }
 
 // Navigation Functions
-function showSection(sectionId) {
+function showSection(sectionId, clickedButton) {
     // Hide all sections
     document.querySelectorAll('.app-section').forEach(section => {
         section.classList.remove('active');
@@ -183,7 +183,7 @@ function showSection(sectionId) {
     document.getElementById(sectionId).classList.add('active');
     
     // Add active class to clicked button
-    event.target.classList.add('active');
+    clickedButton.classList.add('active');
     
     // Load section-specific data
     switch(sectionId) {
@@ -688,6 +688,25 @@ function setupEventListeners() {
     // Profile forms
     document.getElementById('profileForm').addEventListener('submit', updateProfile);
     document.getElementById('preferencesForm').addEventListener('submit', updatePreferences);
+    
+    // Auth tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tab = this.getAttribute('data-tab');
+            switchTab(tab, this);
+        });
+    });
+    
+    // Navigation buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            showSection(section, this);
+        });
+    });
+    
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', logout);
 }
 
 // Chart styles
