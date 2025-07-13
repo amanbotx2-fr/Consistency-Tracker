@@ -72,26 +72,22 @@ const entrySchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Indexes for better query performance
 entrySchema.index({ user: 1, date: -1 });
 entrySchema.index({ user: 1, activity: 1 });
 entrySchema.index({ date: -1 });
 entrySchema.index({ user: 1, 'date': { $gte: new Date() } });
 
-// Calculate total time before saving
 entrySchema.pre('save', function(next) {
     this.totalTime = this.hours + (this.minutes / 60);
     next();
 });
 
-// Virtual for formatted time
 entrySchema.virtual('formattedTime').get(function() {
     const hours = Math.floor(this.totalTime);
     const minutes = Math.round((this.totalTime - hours) * 60);
     return `${hours}h ${minutes}m`;
 });
 
-// Virtual for activity display name
 entrySchema.virtual('activityDisplay').get(function() {
     const activityNames = {
         'coding': 'Coding',
@@ -106,7 +102,6 @@ entrySchema.virtual('activityDisplay').get(function() {
     return activityNames[this.activity] || this.activity;
 });
 
-// Method to get entry summary
 entrySchema.methods.getSummary = function() {
     return {
         id: this._id,
@@ -124,10 +119,9 @@ entrySchema.methods.getSummary = function() {
     };
 };
 
-// Static method to get user stats
 entrySchema.statics.getUserStats = async function(userId) {
     const stats = await this.aggregate([
-        { $match: { user: mongoose.Types.ObjectId(userId) } },
+        { $match: { user: new mongoose.Types.ObjectId(userId) } },
         {
             $group: {
                 _id: null,
@@ -156,7 +150,6 @@ entrySchema.statics.getUserStats = async function(userId) {
     };
 };
 
-// Static method to get daily summary
 entrySchema.statics.getDailySummary = async function(userId, date) {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -181,7 +174,6 @@ entrySchema.statics.getDailySummary = async function(userId, date) {
     };
 };
 
-// Ensure virtual fields are included when converting to JSON
 entrySchema.set('toJSON', { virtuals: true });
 entrySchema.set('toObject', { virtuals: true });
 

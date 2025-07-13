@@ -13,35 +13,28 @@ const userRoutes = require('./routes/users');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Basic security and middleware
 app.use(helmet());
 app.use(cors());
 
-// Rate limiting to prevent abuse
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // max 100 requests per IP
+    windowMs: 15 * 60 * 1000,
+    max: 100
 });
 app.use(limiter);
 
-// Parse JSON and form data
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/entries', entryRoutes);
 app.use('/api/users', userRoutes);
 
-// Serve the main app
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Handle errors
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ 
@@ -51,7 +44,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Catch all other routes
 app.use('*', (req, res) => {
     res.status(404).json({ 
         success: false, 
@@ -59,7 +51,6 @@ app.use('*', (req, res) => {
     });
 });
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
