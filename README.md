@@ -247,13 +247,4 @@ Create these accounts to test different scenarios:
 4. **Responsive Design:**
    - Test on mobile/tablet → Check navigation → Verify forms work
 
-## 📞 Support
-
-If you encounter any issues or have questions:
-1. Check the existing issues in the repository
-2. Create a new issue with detailed information
-3. Contact the maintainers
-
----
-
 **Happy Tracking! 🎯** 
