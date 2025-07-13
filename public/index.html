@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consistency Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" onclick="switchTab('register')">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <h2>Welcome Back</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerFirstName">First Name (Optional):</label>
+                    <input type="text" id="registerFirstName">
+                </div>
+                <div class="form-group">
+                    <label for="registerLastName">Last Name (Optional):</label>
+                    <input type="text" id="registerLastName">
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+                <div id="registerError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="container" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1>🚀 Consistency Tracker</h1>
+                <div class="user-info">
+                    <span id="userName">Welcome</span>
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="app-nav">
+            <button class="nav-btn active" onclick="showSection('dashboard')">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="nav-btn" onclick="showSection('log')">
+                <i class="fas fa-plus"></i> Log Entry
+            </button>
+            <button class="nav-btn" onclick="showSection('history')">
+                <i class="fas fa-history"></i> History
+            </button>
+            <button class="nav-btn" onclick="showSection('analytics')">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+            <button class="nav-btn" onclick="showSection('achievements')">
+                <i class="fas fa-trophy"></i> Achievements
+            </button>
+            <button class="nav-btn" onclick="showSection('profile')">
+                <i class="fas fa-user"></i> Profile
+            </button>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="app-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDays">0</div>
+                    <div class="stat-label">Total Days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalHours">0</div>
+                    <div class="stat-label">Total Hours</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgHours">0</div>
+                    <div class="stat-label">Avg Hours/Day</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="streak">0</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>📅 Recent Activity</h3>
+                    <div id="recentActivity"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>🎯 Goals</h3>
+                    <div id="goalsSection">
+                        <div class="goal-item">
+                            <span>Daily Goal: <span id="dailyGoal">2h</span></span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="goalProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calendar-section">
+                <h3>📅 Calendar View</h3>
+                <div class="calendar-view" id="calendar"></div>
+            </div>
+        </section>
+
+        <!-- Log Entry Section -->
+        <section id="log" class="app-section">
+            <div class="input-section">
+                <h2 class="section-title">📝 Log Your Session</h2>
+                <form id="entryForm" class="entry-form">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="date">Date:</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="activity">Activity:</label>
+                            <select id="activity" required>
+                                <option value="">Select Activity</option>
+                                <option value="coding">Coding</option>
+                                <option value="learning">Learning</option>
+                                <option value="project">Project Work</option>
+                                <option value="practice">Practice/Exercise</option>
+                                <option value="reading">Reading</option>
+                                <option value="tutorial">Tutorial/Course</option>
+                                <option value="debugging">Debugging</option>
+                                <option value="research">Research</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="hours">Hours:</label>
+                            <input type="number" id="hours" min="0" max="24" step="0.1" placeholder="0.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="minutes">Minutes:</label>
+                            <input type="number" id="minutes" min="0" max="59" placeholder="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="project">Project (Optional):</label>
+                            <input type="text" id="project" placeholder="Project name">
+                        </div>
+                        <div class="input-group">
+                            <label for="mood">Mood:</label>
+                            <select id="mood">
+                                <option value="neutral">Neutral</option>
+                                <option value="excellent">Excellent</option>
+                                <option value="good">Good</option>
+                                <option value="challenging">Challenging</option>
+                                <option value="frustrating">Frustrating</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="productivity">Productivity (1-10):</label>
+                            <input type="number" id="productivity" min="1" max="10" value="5">
+                        </div>
+                        <div class="input-group">
+                            <label for="location">Location (Optional):</label>
+                            <input type="text" id="location" placeholder="Where were you?">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="notes">Notes (Optional):</label>
+                        <textarea id="notes" placeholder="What did you work on? Any challenges or achievements?"></textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="tags">Tags (Optional):</label>
+                        <input type="text" id="tags" placeholder="Enter tags separated by commas">
+                    </div>
+                    
+                    <button type="submit" class="btn">Add Entry</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="app-section">
+            <div class="history-section">
+                <h2 class="section-title">📊 Your Progress</h2>
+                <div class="history-filters">
+                    <select id="activityFilter">
+                        <option value="">All Activities</option>
+                        <option value="coding">Coding</option>
+                        <option value="learning">Learning</option>
+                        <option value="project">Project Work</option>
+                        <option value="practice">Practice/Exercise</option>
+                        <option value="reading">Reading</option>
+                        <option value="tutorial">Tutorial/Course</option>
+                        <option value="debugging">Debugging</option>
+                        <option value="research">Research</option>
+                    </select>
+                    <input type="date" id="startDate" placeholder="Start Date">
+                    <input type="date" id="endDate" placeholder="End Date">
+                    <button class="btn btn-secondary" onclick="filterHistory()">Filter</button>
+                </div>
+                <div id="history"></div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="app-section">
+            <div class="analytics-section">
+                <h2 class="section-title">📈 Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Activity Distribution</h3>
+                        <div id="activityChart"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Mood Trends</h3>
+                        <div id="moodChart"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Productivity Trends</h3>
+                        <div id="productivityChart"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Time Trends</h3>
+                        <div id="timeChart"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievements" class="app-section">
+            <div class="achievements-section">
+                <h2 class="section-title">🏆 Achievements</h2>
+                <div class="achievements-grid" id="achievementsGrid"></div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="app-section">
+            <div class="profile-section">
+                <h2 class="section-title">👤 Profile</h2>
+                <div class="profile-grid">
+                    <div class="profile-card">
+                        <h3>Personal Information</h3>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label for="profileFirstName">First Name:</label>
+                                <input type="text" id="profileFirstName">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileLastName">Last Name:</label>
+                                <input type="text" id="profileLastName">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileBio">Bio:</label>
+                                <textarea id="profileBio" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                            <button type="submit" class="btn">Update Profile</button>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <h3>Preferences</h3>
+                        <form id="preferencesForm">
+                            <div class="form-group">
+                                <label for="defaultActivity">Default Activity:</label>
+                                <select id="defaultActivity">
+                                    <option value="coding">Coding</option>
+                                    <option value="learning">Learning</option>
+                                    <option value="project">Project Work</option>
+                                    <option value="practice">Practice/Exercise</option>
+                                    <option value="reading">Reading</option>
+                                    <option value="tutorial">Tutorial/Course</option>
+                                    <option value="debugging">Debugging</option>
+                                    <option value="research">Research</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="goalHoursPerDay">Daily Goal (hours):</label>
+                                <input type="number" id="goalHoursPerDay" min="0" max="24" step="0.5" value="2">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="emailNotifications"> Email Notifications
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="browserNotifications"> Browser Notifications
+                                </label>
+                            </div>
+                            <button type="submit" class="btn">Update Preferences</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
