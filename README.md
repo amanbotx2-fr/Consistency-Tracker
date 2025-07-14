@@ -2,6 +2,10 @@
 
 A productivity tracking app I built to help me stay consistent with my daily activities. Built with Node.js, Express, and MongoDB. Track your activities, see your progress, and build better habits.
 
+## 🌐 Live Demo
+
+**Try it out:** [https://consistency-tracker-vgg9.onrender.com](https://consistency-tracker-vgg9.onrender.com)
+
 ## Features
 
 - **User authentication** - Register, login, manage your profile
