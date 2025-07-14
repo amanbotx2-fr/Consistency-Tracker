@@ -186,6 +186,8 @@ router.post('/', auth, [
             location
         } = req.body;
 
+        req.body.totalTime = (parseFloat(hours) || 0) + ((parseFloat(minutes) || 0) / 60);
+
         // Create new entry
         const entry = new Entry({
             user: req.user._id,
@@ -198,7 +200,8 @@ router.post('/', auth, [
             mood,
             productivity,
             project,
-            location
+            location,
+            totalTime: req.body.totalTime
         });
 
         await entry.save();
