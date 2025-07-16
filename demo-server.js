@@ -135,7 +135,6 @@ app.post('/api/entries', (req, res) => {
         mood: mood,
         productivity: productivity,
         project: project || '',
-        location: location || '',
         tags: Array.isArray(tags) ? tags : [],
         createdAt: new Date()
     };
@@ -148,6 +147,25 @@ app.post('/api/entries', (req, res) => {
         data: newEntry
     });
 });
+
+app.delete('/api/entries/:id', (req, res) => {
+    const entryId = parseInt(req.params.id, 10);
+    const entryIndex = entries.findIndex(entry => entry.id === entryId);
+
+    if (entryIndex !== -1) {
+        entries.splice(entryIndex, 1);
+        res.json({
+            success: true,
+            message: 'Entry deleted successfully (demo mode)'
+        });
+    } else {
+        res.status(404).json({
+            success: false,
+            message: 'Entry not found'
+        });
+    }
+});
+
 
 app.get('/api/entries/stats/summary', (req, res) => {
     const userEntries = entries.filter(entry => entry.userId === 1);

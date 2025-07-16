@@ -283,7 +283,6 @@ async function addEntry(event) {
         project: document.getElementById('project').value,
         mood: document.getElementById('mood').value,
         productivity: parseInt(document.getElementById('productivity').value) || 5,
-        location: document.getElementById('location').value,
         tags: document.getElementById('tags').value ? document.getElementById('tags').value.split(',').map(tag => tag.trim()) : []
     };
     
@@ -379,7 +378,7 @@ function updateHistoryDisplay() {
             </div>
             ${entry.notes ? `<div class="history-notes">${entry.notes}</div>` : ''}
             ${entry.project ? `<div class="history-project">Project: ${entry.project}</div>` : ''}
-            <button class="delete-btn" onclick="deleteEntry('${entry.id}')">Delete</button>
+            <button class="delete-btn" data-id="${entry.id || entry._id}">Delete</button>
         </div>
     `).join('');
     
@@ -434,7 +433,8 @@ async function deleteEntry(entryId) {
             loadHistory(currentPage);
             loadDashboard();
         } else {
-            alert('Failed to delete entry');
+            const errorData = await response.json();
+            alert(`Failed to delete entry: ${errorData.message || 'An unknown error occurred.'}`);
         }
     } catch (error) {
         console.error('Delete entry error:', error);
@@ -463,57 +463,79 @@ async function loadAnalytics() {
 }
 
 function updateAnalytics(stats) {
-    // Activity distribution chart
+    if (!stats || stats.length === 0) {
+        document.getElementById('analytics').innerHTML = '<p>No data available for analytics.</p>';
+        return;
+    }
+
+    // Calculate total entries
+    const totalEntries = stats.length;
+
+    // Activity distribution
+    const activityCounts = stats.reduce((acc, entry) => {
+        acc[entry.activityDisplay] = (acc[entry.activityDisplay] || 0) + 1;
+        return acc;
+    }, {});
+
     const activityChart = document.getElementById('activityChart');
-    if (stats.activityDistribution) {
-        const activityHTML = Object.entries(stats.activityDistribution)
-            .map(([activity, count]) => `
-                <div class="chart-item">
-                    <span>${activity}</span>
-                    <div class="chart-bar">
-                        <div class="chart-fill" style="width: ${(count / stats.totalEntries * 100)}%"></div>
-                    </div>
-                    <span>${count}</span>
-                </div>
-            `).join('');
-        activityChart.innerHTML = activityHTML;
-    }
-    
-    // Mood distribution chart
+    activityChart.innerHTML = generateChartHTML(activityCounts, totalEntries);
+
+    // Mood distribution
+    const moodCounts = stats.reduce((acc, entry) => {
+        acc[entry.mood] = (acc[entry.mood] || 0) + 1;
+        return acc;
+    }, {});
+
     const moodChart = document.getElementById('moodChart');
-    if (stats.moodDistribution) {
-        const moodHTML = Object.entries(stats.moodDistribution)
-            .map(([mood, count]) => `
-                <div class="chart-item">
-                    <span>${mood}</span>
-                    <div class="chart-bar">
-                        <div class="chart-fill" style="width: ${(count / stats.totalEntries * 100)}%"></div>
-                    </div>
-                    <span>${count}</span>
-                </div>
-            `).join('');
-        moodChart.innerHTML = moodHTML;
-    }
-    
-    // Productivity chart
+    moodChart.innerHTML = generateChartHTML(moodCounts, totalEntries);
+
+    // Productivity analysis
+    const totalProductivity = stats.reduce((sum, entry) => sum + entry.productivity, 0);
+    const averageProductivity = totalProductivity / totalEntries;
+
     const productivityChart = document.getElementById('productivityChart');
     productivityChart.innerHTML = `<div class="chart-item">
         <span>Average Productivity</span>
         <div class="chart-bar">
-            <div class="chart-fill" style="width: ${(stats.averageProductivity / 10 * 100)}%"></div>
+            <div class="chart-fill" style="width: ${(averageProductivity / 10) * 100}%"></div>
         </div>
-        <span>${stats.averageProductivity.toFixed(1)}/10</span>
+        <span>${averageProductivity.toFixed(1)}/10</span>
     </div>`;
-    
-    // Time trends chart
+
+    // Time Trends Analysis
+    // 1. Calculate total hours per day
+    const dailyHours = stats.reduce((acc, entry) => {
+        const date = new Date(entry.date).toLocaleDateString(); // Group by date
+        acc[date] = (acc[date] || 0) + entry.totalTime;
+        return acc;
+    }, {});
+
+    // 2. Calculate average hours per day
+    const totalDays = Object.keys(dailyHours).length;
+    const totalHours = Object.values(dailyHours).reduce((sum, hours) => sum + hours, 0);
+    const averageHoursPerDay = totalHours / totalDays;
+
     const timeChart = document.getElementById('timeChart');
     timeChart.innerHTML = `<div class="chart-item">
         <span>Average Hours/Day</span>
         <div class="chart-bar">
-            <div class="chart-fill" style="width: ${Math.min((stats.averageHoursPerDay / 8) * 100, 100)}%"></div>
+            <div class="chart-fill" style="width: ${Math.min((averageHoursPerDay / 8) * 100, 100)}%"></div>
         </div>
-        <span>${stats.averageHoursPerDay.toFixed(1)}h</span>
+        <span>${averageHoursPerDay.toFixed(1)}h</span>
     </div>`;
+}
+
+function generateChartHTML(data, total) {
+    return Object.entries(data)
+        .map(([label, count]) => `
+            <div class="chart-item">
+                <span>${label}</span>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: ${(count / total) * 100}%"></div>
+                </div>
+                <span>${count}</span>
+            </div>
+        `).join('');
 }
 
 // Achievements Functions
@@ -706,6 +728,18 @@ function setupEventListeners() {
     
     // Logout button
     document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    // Event delegation for delete buttons in history
+    document.getElementById('history').addEventListener('click', function(event) {
+        // Check if a delete button was clicked
+        if (event.target.classList.contains('delete-btn')) {
+            const entryId = event.target.dataset.id;
+            // Ensure we have a valid ID before attempting to delete
+            if (entryId && entryId !== 'undefined') {
+                deleteEntry(entryId);
+            }
+        }
+    });
 }
 
 // Chart styles

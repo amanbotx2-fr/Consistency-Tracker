@@ -157,10 +157,6 @@ router.post('/', auth, [
         .optional()
         .isLength({ max: 100 })
         .withMessage('Project name cannot exceed 100 characters'),
-    body('location')
-        .optional()
-        .isLength({ max: 100 })
-        .withMessage('Location cannot exceed 100 characters')
 ], async (req, res) => {
     try {
         // Check for validation errors
@@ -183,7 +179,6 @@ router.post('/', auth, [
             mood = 'neutral',
             productivity = 5,
             project,
-            location
         } = req.body;
 
         req.body.totalTime = (parseFloat(hours) || 0) + ((parseFloat(minutes) || 0) / 60);
@@ -200,7 +195,6 @@ router.post('/', auth, [
             mood,
             productivity,
             project,
-            location,
             totalTime: req.body.totalTime
         });
 
@@ -266,10 +260,6 @@ router.put('/:id', auth, [
         .optional()
         .isLength({ max: 100 })
         .withMessage('Project name cannot exceed 100 characters'),
-    body('location')
-        .optional()
-        .isLength({ max: 100 })
-        .withMessage('Location cannot exceed 100 characters')
 ], async (req, res) => {
     try {
         // Check for validation errors
@@ -295,7 +285,7 @@ router.put('/:id', auth, [
         }
 
         // Update fields
-        const updateFields = ['date', 'activity', 'hours', 'minutes', 'notes', 'tags', 'mood', 'productivity', 'project', 'location'];
+        const updateFields = ['date', 'activity', 'hours', 'minutes', 'notes', 'tags', 'mood', 'productivity', 'project'];
         updateFields.forEach(field => {
             if (req.body[field] !== undefined) {
                 entry[field] = req.body[field];
