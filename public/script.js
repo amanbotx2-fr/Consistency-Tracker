@@ -339,6 +339,12 @@ async function loadHistory(page = 1) {
             currentPage = data.data.pagination.page;
             totalPages = data.data.pagination.pages;
             
+            // If current page is empty and there are previous pages, go to the last page
+            if (entries.length === 0 && currentPage > 1 && totalPages > 0) {
+                await loadHistory(totalPages);
+                return;
+            }
+            
             updateHistoryDisplay();
             updatePagination();
         }
@@ -350,7 +356,7 @@ async function loadHistory(page = 1) {
 function updateHistoryDisplay() {
     const historyDiv = document.getElementById('history');
     
-    if (entries.length === 0) {
+    if (!entries || entries.length === 0) {
         historyDiv.innerHTML = '<p>No entries found. Start logging your sessions!</p>';
         return;
     }
@@ -388,7 +394,7 @@ function updateHistoryDisplay() {
 function updatePagination() {
     const paginationDiv = document.getElementById('pagination');
     
-    if (totalPages <= 1) {
+    if (!totalPages || totalPages <= 1) {
         paginationDiv.innerHTML = '';
         return;
     }
@@ -429,9 +435,17 @@ async function deleteEntry(entryId) {
         });
         
         if (response.ok) {
-            alert('Entry deleted successfully!');
-            loadHistory(currentPage);
+            // Remove the entry from the global entries array
+            entries = entries.filter(entry => (entry.id || entry._id) !== entryId);
+            
+            // Update the history display immediately
+            updateHistoryDisplay();
+            updatePagination();
+            
+            // Update dashboard and calendar
             loadDashboard();
+            
+            alert('Entry deleted successfully!');
         } else {
             const errorData = await response.json();
             alert(`Failed to delete entry: ${errorData.message || 'An unknown error occurred.'}`);
@@ -678,7 +692,7 @@ function updateCalendar() {
     const firstDayOfWeek = startOfMonth.getDay();
     
     // Get entry dates for the current month
-    const entryDates = new Set(entries.map(e => e.date.split('T')[0]));
+    const entryDates = new Set((entries || []).map(e => e.date.split('T')[0]));
     
     let calendarHTML = '';
     
